@@ -1,1 +1,1 @@
-# CS50-2018-
+Solutions to the problem sets in Harvard's CS50 2018 course.
