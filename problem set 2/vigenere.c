@@ -34,19 +34,23 @@ int main(int argc, string argv[])
     int plainTextLength = strlen(plainText);
     int cipherText[plainTextLength];
     keyIndex = 0;
-    for (int i = 0; i < plainTextLength; i++) // when key >= plainTextLength
+    for (int i = 0; i < plainTextLength; i++)
     {
         // If not a special character, encrypt plainText[i] and loop through key
-        if ((plainText[i] >= 'A' && plainText[i] <= 'Z') || (plainText[i] >= 'a' && plainText[i] <= 'z'))                      // plainText[i] is uppercase
+        if ((plainText[i] >= 'A' && plainText[i] <= 'Z') || (plainText[i] >= 'a' && plainText[i] <= 'z'))
         {
-            if (key[keyIndex % keyLength] >= 'a' && key[keyIndex % keyLength] <= 'z') //lowercase filter
-                cipherText[i] = plainText[i] + (key[keyIndex % keyLength] % 97);
-            else if (key[keyIndex % keyLength] >= 'A' && key[keyIndex % keyLength] <= 'Z') //uppercase filter
-                cipherText[i] = plainText[i] + (key[keyIndex % keyLength] % 65);
+            // Shift plaintext up according to the current key character
+            int currentKeyChar = key[keyIndex % keyLength];         // loop through key
+
+            if (currentKeyChar >= 'A' && currentKeyChar <= 'Z')         // uppercase filter
+                cipherText[i] = plainText[i] + (currentKeyChar % 'A');
+            else if (currentKeyChar >= 'a' && currentKeyChar <= 'z')    // lowercase filter
+                cipherText[i] = plainText[i] + (currentKeyChar % 'a');
+
 
             // If plainText case and cipherText case don't match
             if (((plainText[i] >= 'A' && plainText[i] <= 'Z') && (cipherText[i] < 'A' || cipherText[i] > 'Z')) ||
-                ((plainText[i] >= 'a' && plainText[i] <= 'z') && (cipherText[i] < 'a' || cipherText[i] > 'z')))                      // plainText[i] is uppercase
+                ((plainText[i] >= 'a' && plainText[i] <= 'z') && (cipherText[i] < 'a' || cipherText[i] > 'z')))
             {
                 cipherText[i] = cipherText[i] - 26;
 
