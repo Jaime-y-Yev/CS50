@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <cs50.h>
 #include <string.h>
-#include <stdlib.h>
-
-int LUEncrypt();
 
 
 int main(int argc, string argv[])
@@ -18,9 +15,10 @@ int main(int argc, string argv[])
     // key must be only letters
     string key = argv[1];
     int keyLength = strlen(key);
-    for (int i = 0; i < keyLength; i++)
+    int keyIndex = 0;
+    for (keyIndex = 0; keyIndex < keyLength; keyIndex++)
     {
-        if (key[i] < 'A' || (key[i] > 'Z' && key[i] < 'a') || key[i] > 'z')
+        if (key[keyIndex] < 'A' || (key[keyIndex] > 'Z' && key[keyIndex] < 'a') || key[keyIndex] > 'z')
         {
             printf("The key must contain only letters. \n");
             return 1;
@@ -35,13 +33,16 @@ int main(int argc, string argv[])
     // Loop through plainText and (conditionally) the key
     int plainTextLength = strlen(plainText);
     int cipherText[plainTextLength];
-    int keyIndex = 0;
+    keyIndex = 0;
     for (int i = 0; i < plainTextLength; i++) // when key >= plainTextLength
     {
         // If not a special character, encrypt plainText[i] and loop through key
         if ((plainText[i] >= 'A' && plainText[i] <= 'Z') || (plainText[i] >= 'a' && plainText[i] <= 'z'))                      // plainText[i] is uppercase
         {
-            cipherText[i] = LUEncrypt(i, keyIndex, key, plainText, keyLength, plainTextLength);
+            if (key[keyIndex % keyLength] >= 'a' && key[keyIndex % keyLength] <= 'z') //lowercase filter
+                cipherText[i] = plainText[i] + (key[keyIndex % keyLength] % 97);
+            else if (key[keyIndex % keyLength] >= 'A' && key[keyIndex % keyLength] <= 'Z') //uppercase filter
+                cipherText[i] = plainText[i] + (key[keyIndex % keyLength] % 65);
 
             // If plainText case and cipherText case don't match
             if (((plainText[i] >= 'A' && plainText[i] <= 'Z') && (cipherText[i] < 'A' || cipherText[i] > 'Z')) ||
@@ -50,7 +51,7 @@ int main(int argc, string argv[])
                 cipherText[i] = cipherText[i] - 26;
 
                 // Some characters may land beyond 'z' but will loop around differently depending on where they land
-                if (cipherText[i] > 122 && cipherText[i] < 150)
+                if (cipherText[i] > 'z' && cipherText[i] < 150)
                     cipherText[i] = (cipherText[i] % 122) + 96;
                 else if (cipherText[i] >= 150)
                     cipherText[i] = (cipherText[i] % 122) + 70;
@@ -69,21 +70,4 @@ int main(int argc, string argv[])
     printf("\n");
 
     return 0;
-}
-
-
-int LUEncrypt(int i, int keyIndex, string key, string plainText, int keyLength, int plainTextLength)
-{
-    int cipherText[plainTextLength];
-
-    if(key[keyIndex % keyLength] >= 97 && key[keyIndex % keyLength] <= 122) //lowercase filter
-    {
-        cipherText[i] = plainText[i] + (key[keyIndex % keyLength] % 97);
-    }
-    else if(key[keyIndex % keyLength] >= 65 && key[keyIndex % keyLength] <= 90) //uppercase filter
-    {
-        cipherText[i] = plainText[i] + (key[keyIndex % keyLength] % 65);
-    }
-
-    return cipherText[i];
 }
