@@ -32,17 +32,20 @@ int main(int argc, string argv[])
 
     printf("ciphertext: ");
 
-    // Loop through key and plainText
+    // Loop through plainText and (conditionally) the key
     int plainTextLength = strlen(plainText);
     int cipherText[plainTextLength];
     int keyIndex = 0;
     for (int i = 0; i < plainTextLength; i++) // when key >= plainTextLength
     {
-        if ((plainText[i] >= 'A' && plainText[i] <= 'Z'))                      // plainText[i] is uppercase
+        // If not a special character, encrypt plainText[i] and loop through key
+        if ((plainText[i] >= 'A' && plainText[i] <= 'Z') || (plainText[i] >= 'a' && plainText[i] <= 'z'))                      // plainText[i] is uppercase
         {
             cipherText[i] = LUEncrypt(i, keyIndex, key, plainText, keyLength, plainTextLength);
 
-            if (cipherText[i] < 'A' || cipherText[i] > 'Z')     // if encrypted not capital
+            // If plainText case and cipherText case don't match
+            if (((plainText[i] >= 'A' && plainText[i] <= 'Z') && (cipherText[i] < 'A' || cipherText[i] > 'Z')) ||
+                ((plainText[i] >= 'a' && plainText[i] <= 'z') && (cipherText[i] < 'a' || cipherText[i] > 'z')))                      // plainText[i] is uppercase
             {
                 cipherText[i] = cipherText[i] - 26;
 
@@ -55,31 +58,12 @@ int main(int argc, string argv[])
 
             keyIndex++;
         }
-        else if((plainText[i] >= 'a' && plainText[i] <= 'z'))                // plainText[i] is lowercase
-        {
-            cipherText[i] = LUEncrypt(i, keyIndex, key, plainText, keyLength, plainTextLength);
-
-            if(cipherText[i] < 'a' || cipherText[i] > 'z') //if encrypted not lowercase
-            {
-                cipherText[i] = cipherText[i] - 26;
-
-                /* some characters may land beyond the z character
-                *  but will loop around differently depending on where they land
-                */
-                if(cipherText[i] > 122 && cipherText[i] < 150)
-                    cipherText[i] = (cipherText[i] % 122) + 96;
-                else if(cipherText[i] >= 150)
-                    cipherText[i] = (cipherText[i] % 122) + 70;
-            }
-
-            keyIndex++;
-        }
-        else if(plainText[i] < 'A' || (plainText[i] > 'Z' && plainText[i] < 'a') || plainText[i] > 'z')
+        // Do not encrypt special characters, do not loop through key
+        else
         {
             cipherText[i] = plainText[i];
         }
 
-        //printf("Your plainText %c added to key %c becomes: %c \n", plainText[i], key[i], cipherText[i]);
         printf("%c", cipherText[i]);
     }
     printf("\n");
