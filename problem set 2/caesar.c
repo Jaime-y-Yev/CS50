@@ -17,38 +17,38 @@ int main(int argc, string argv[])
 
     // Prompt for string to encrypt
     printf("plaintext: ");
-    string text = get_string();
+    string plainText = get_string();
 
 
     printf("ciphertext: ");
 
     // Rotate every character a value of key up the alphabet, ignores special characters
-    int textLength = strlen(text);
-    int newText[textLength];
+    int textLength = strlen(plainText);
+    int cipherText[textLength];
     for (int i = 0; i < textLength; i++)
     {
         // Encrypt characters between A-Z or a-z only
-        if ((text[i] >= 'A' && text[i] <= 'Z') || (text[i] >= 'a' && text[i] <= 'z'))
+        if ((plainText[i] >= 'A' && plainText[i] <= 'Z') || (plainText[i] >= 'a' && plainText[i] <= 'z'))
         {
-            newText[i] = (text[i] + key) % 'z';     // wrap around 'z'
+            cipherText[i] = (plainText[i] + key) % 'z';     // wrap around 'z'
 
             // if encrypted character lands on special character, shift into the accepted range
-            if (newText[i] < 'A')
+            if (cipherText[i] < 'A')
             {
-                newText[i] = newText[i] + 96;
+                cipherText[i] = cipherText[i] + 96;
 
                 // Some characters may land beyond 'z' but will loop around differently depending on where they land
-                if (newText[i] > 'z' && newText[i] < 150)
-                    newText[i] = (newText[i] % 'z') + 96;
-                else if (newText[i] >= 150)
-                    newText[i] = (newText[i] % 'z') + 70;
+                if (cipherText[i] > 'z' && cipherText[i] < 150)
+                    cipherText[i] = (cipherText[i] % 'z') + 96;
+                else if (cipherText[i] >= 150)
+                    cipherText[i] = (cipherText[i] % 'z') + 70;
             }
         }
         else
         {
-            newText[i] = text[i];
+            cipherText[i] = plainText[i];
         }
-        printf("%c", newText[i]);
+        printf("%c", cipherText[i]);
     }
     printf("\n");
 
