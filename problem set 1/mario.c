@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <cs50.h>
 
+
 int main(void)
 {
     // Get the number of blocks from the user
