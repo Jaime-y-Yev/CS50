@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 char *crypt();
-int function();
+_Bool compare();
 
 
 int main(int argc, string argv[])
@@ -37,22 +37,19 @@ int main(int argc, string argv[])
 
     char key[6] = {'\0','\0','\0','\0','\0','\0'};        // key is 5 characters + 1 for null byte
 
-    for (int j = 0; j < 5; j++)
+    _Bool found = false;
+    for (int i = 0; i < 5; i++)
     {
         for (int k0 = 0; k0 < 52; k0++)
         {
             key[0] = options[k0];
 
-            if (j < 1)
+            if (i < 1)
             {
-                printf("key = %s \n", key);
+                found = compare(key, salt, hash);
 
-                string encryptedPassword = crypt(key, salt);
-                if (strcmp(encryptedPassword, hash) == 0)
-                {
-                    printf("%s \n", key);
+                if (found)
                     return 0;
-                }
             }
             else
             {
@@ -60,16 +57,12 @@ int main(int argc, string argv[])
                 {
                     key[1] = options[k1];
 
-                    if (j < 2)
+                    if (i < 2)
                     {
-                        printf("key = %s \n", key);
+                        found = compare(key, salt, hash);
 
-                        string encryptedPassword = crypt(key, salt);
-                        if (strcmp(encryptedPassword, hash) == 0)
-                        {
-                            printf("%s \n", key);
+                        if (found)
                             return 0;
-                        }
                     }
                     else
                     {
@@ -77,16 +70,12 @@ int main(int argc, string argv[])
                         {
                             key[2] = options[k2];
 
-                            if (j < 3)
+                            if (i < 3)
                             {
-                                printf("key = %s \n", key);
+                                found = compare(key, salt, hash);
 
-                                string encryptedPassword = crypt(key, salt);
-                                if (strcmp(encryptedPassword, hash) == 0)
-                                {
-                                    printf("%s \n", key);
+                                if (found)
                                     return 0;
-                                }
                             }
                             else
                             {
@@ -94,16 +83,12 @@ int main(int argc, string argv[])
                                 {
                                     key[3] = options[k3];
 
-                                    if (j < 4)
+                                    if (i < 4)
                                     {
-                                        printf("key = %s \n", key);
+                                        found = compare(key, salt, hash);
 
-                                        string encryptedPassword = crypt(key, salt);
-                                        if (strcmp(encryptedPassword, hash) == 0)
-                                        {
-                                            printf("%s \n", key);
+                                        if (found)
                                             return 0;
-                                        }
                                     }
                                     else
                                     {
@@ -111,14 +96,10 @@ int main(int argc, string argv[])
                                         {
                                             key[4] = options[k4];
 
-                                            printf("key = %s \n", key);
+                                            found = compare(key, salt, hash);
 
-                                            string encryptedPassword = crypt(key, salt);
-                                            if (strcmp(encryptedPassword, hash) == 0)
-                                            {
-                                                printf("%s \n", key);
+                                            if (found)
                                                 return 0;
-                                            }
                                         }
                                     }
                                 }
@@ -136,31 +117,16 @@ int main(int argc, string argv[])
 }
 
 
-//function(key, options, j, salt, hash);
-int function(char key[], char options[], int numDigits, char salt[], char hash[])
+_Bool compare(char key[], char salt[], char hash[])
 {
-    printf("numDigits = %i \n", numDigits);
+    printf("key = %s \n", key);
 
-    for (int k0 = 0; k0 < 52; k0++)
+    string encryptedPassword = crypt(key, salt);
+    if (strcmp(encryptedPassword, hash) == 0)
     {
-        key[numDigits] = options[k0];
-
-        if (numDigits < 1) //j < 1
-        {
-            printf("key = %s \n", key);
-
-            string encryptedPassword = crypt(key, salt);
-            if (strcmp(encryptedPassword, hash) == 0)
-            {
-                printf("%s \n", key);
-                return 0;
-            }
-        }
-        else
-        {
-            function(key, options, numDigits+1, salt, hash);
-        }
+        printf("%s \n", key);
+        return true;
     }
 
-    return 2;
+    return false;
 }
