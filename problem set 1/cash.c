@@ -26,16 +26,18 @@ int main(void)
     // Each loop extracts amount of quarters, dimes, and nickels (pennies processed after the loop)
     for (int i = 0; i < 3; i++)
     {
-        int weirdCalculation = (25 - i * (20 - i * 5));
+        int coinValue = (25 - i * (20 - i * 5));        // coin values 25, 10, 5 can be hardcoded, this is just a fancy, dynamic way
 
-        numCoins = remain / weirdCalculation;
+        numCoins = remain / coinValue;                  // maximum number quarters/dimes/nickels in the remaining cash
 
-        remain = remain - numCoins * weirdCalculation;   // subtracts amount and updates remaining amount
+        remain = remain - numCoins * coinValue;         // subtracts amount that was just removed from cash and updates remaining amount
 
-        totalCoins = totalCoins + numCoins;                     // keeps count of number of coins extracted
+        totalCoins = totalCoins + numCoins;             // keeps count of number of coins extracted
     }
 
-    // adds final remainder (pennies) to coin counter and prints final total coin count
+    // Adds final remainder (pennies) to coin counter and prints final total coin count
     totalCoins = totalCoins + remain;
-    printf("%i\n", totalCoins);
+    printf("total coin count = %i \n", totalCoins);
+
+    return 0;
 }
