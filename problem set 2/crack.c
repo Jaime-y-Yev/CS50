@@ -6,9 +6,15 @@
 #include <unistd.h>
 
 char *crypt();
-_Bool compare(char key[], char salt[], char hash[]);    // If the encrypted key equals the given hash, that key is the password
-int loopRecursive();
-int loopNonRecursive();
+
+// If the encrypted key equals the given hash, that key is the password (so terminate the program)
+void compare(char key[], char salt[], char hash[]);    // If the encrypted key equals the given hash, that key is the password
+
+// Non-recursively loop first through all one-letter combinations, then all two-letter combos, and so forth until all five-letter combos
+void loopNonRecursive(int keyLength, string key, string options, string salt, string hash);
+
+// Recursively loop first through all one-letter combinations, then all two-letter combos, and so forth until all five-letter combos
+void loopRecursive(int keyLength, int keyIndex, string key, string options, string salt, string hash);
 
 
 int main(int argc, string argv[])
@@ -37,105 +43,77 @@ int main(int argc, string argv[])
     /* Loop through all possible combinations,
      * first through all one-letter combinations (i=0), then through all two-letter passwords (i=1),
      * and so forth until looping finally through all five-letter passwords (i=4) */
-    for (int i = 0; i < 5; i++)
+    for (int keyLength = 0; keyLength < 5; keyLength++)
     {
-        loopRecursive(i, 0, key, options, salt, hash);          // can be done recursively or non-recursively
-        //loopNonRecursive(i, key, options, salt, hash);
+        loopNonRecursive(keyLength, key, options, salt, hash);          // can be done recursively or non-recursively
+        //loopRecursive(keyLength, 0, key, options, salt, hash);
     }
 
 
     return 0;
 }
 
-// If the encrypted key equals the given hash, that key is the password
-_Bool compare(char key[], char salt[], char hash[])
+// If the encrypted key equals the given hash, that key is the password (so terminate the program)
+void compare(char key[], char salt[], char hash[])
 {
     printf("key = %s \n", key);
 
     string encryptedPassword = crypt(key, salt);
     if (strcmp(encryptedPassword, hash) == 0)
     {
-        printf("%s \n", key);
+        printf("The password is: %s \n", key);
         exit(0);                // If the key is found, terminate the program with exit code 0
     }
-
-    return false;
 }
 
-
-int loopRecursive(int i, int keyIndex, string key, string options, string salt, string hash)
+// Non-recursively loop first through all one-letter combinations, then all two-letter combos, and so forth until all five-letter combos
+void loopNonRecursive(int keyLength, string key, string options, string salt, string hash)
 {
-    for (int k0 = 0; k0 < 52; k0++)
+    for (int o0 = 0; o0 < 52; o0++)     // 52 possible options in {'A', 'B', ..., 'Z', 'a', 'b', ...,'z'}
     {
-        key[keyIndex] = options[k0];
+        key[0] = options[o0];
 
-        if (i < keyIndex+1)
+        if (keyLength < 1)                              // if in the one-letter loop, compare each and every ONE-LETTER combo
         {
-            if (compare(key, salt, hash))
-                return 0;
+            compare(key, salt, hash);
         }
-        else
+        else                                    // else allow for all two-letter combos
         {
-            loopRecursive(i, keyIndex+1, key, options, salt, hash);
-        }
-    }
-
-    return 2;
-}
-
-
-int loopNonRecursive(int i, string key, string options, string salt, string hash)
-{
-    for (int k0 = 0; k0 < 52; k0++)
-    {
-        key[0] = options[k0];
-
-        if (i < 1)
-        {
-            if (compare(key, salt, hash))
-                return 0;
-        }
-        else
-        {
-            for (int k1 = 0; k1 < 52; k1++)
+            for (int o1 = 0; o1 < 52; o1++)
             {
-                key[1] = options[k1];
+                key[1] = options[o1];
 
-                if (i < 2)
+                if (keyLength < 2)                                  // if in the two-letter loop, compare each and every TWO-LETTER combo
                 {
-                    if (compare(key, salt, hash))
-                        return 0;
+                    compare(key, salt, hash);
                 }
-                else
+                else                                        // else allow for all three-letter combos
                 {
-                    for (int k2 = 0; k2 < 52; k2++)
+                    for (int o2 = 0; o2 < 52; o2++)
                     {
-                        key[2] = options[k2];
+                        key[2] = options[o2];
 
-                        if (i < 3)
+                        if (keyLength < 3)                                      // THREE-LETTER combos
                         {
-                            if (compare(key, salt, hash))
-                                return 0;
+                            compare(key, salt, hash);
                         }
                         else
                         {
-                            for (int k3 = 0; k3 < 52; k3++)
+                            for (int o3 = 0; o3 < 52; o3++)
                             {
-                                key[3] = options[k3];
+                                key[3] = options[o3];
 
-                                if (i < 4)
+                                if (keyLength < 4)                                          // FOUR-LETTER combos
                                 {
-                                    if (compare(key, salt, hash))
-                                        return 0;
+                                    compare(key, salt, hash);
                                 }
-                                else
+                                else                                                        // FIVE-LETTER combos
                                 {
-                                    for (int k4 = 0; k4 < 52; k4++)
+                                    for (int o4 = 0; o4 < 52; o4++)
                                     {
-                                        key[4] = options[k4];
+                                        key[4] = options[o4];
 
-                                        if (compare(key, salt, hash))
-                                            return 0;
+                                        compare(key, salt, hash);
                                     }
                                 }
                             }
@@ -145,6 +123,18 @@ int loopNonRecursive(int i, string key, string options, string salt, string hash
             }
         }
     }
+}
 
-    return 2;
+// Recursively loop first through all one-letter combinations, then all two-letter combos, and so forth until all five-letter combos
+void loopRecursive(int keyLength, int keyIndex, string key, string options, string salt, string hash)
+{
+    for (int o = 0; o < 52; o++)            // 52 possible options in {'A', 'B', ..., 'Z', 'a', 'b', ...,'z'}
+    {
+        key[keyIndex] = options[o];
+
+        if (keyLength < keyIndex+1)             // if in the one-letter loop, compare each and every ONE-LETTER combo; if in the second-letter loop, compare each TWO-LETTER combo, etc.
+            compare(key, salt, hash);
+        else
+            loopRecursive(keyLength, keyIndex+1, key, options, salt, hash);
+    }
 }
