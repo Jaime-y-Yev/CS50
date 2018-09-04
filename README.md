@@ -5,3 +5,5 @@ Problems in 2018 but not in 2017:
     Pset3: music
 
 Problems in 2017 but not in 2018:
+
+    Pset2: ascii, initials, shift
