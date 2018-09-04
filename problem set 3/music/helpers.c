@@ -20,66 +20,14 @@ int duration(string fraction)
 // Calculates frequency (in Hz) of a note (ej. C5, G#2, Ab3)
 int frequency(string note)
 {
-    //printf("note = %s \n", note);
-
-    double semitones = getSemitones(note);
+    //double semitones = getSemitones(note);
+    double semitones = getSemitonesBrute(note);
     //printf("semitones = %f \n", semitones);
 
-    double exponent = -semitones/12;
-    int freq = pow(2,exponent) * 440;    // f = 2^(n/12) × 440 where n = number of semitones
+    // The frequency f = 2^(n/12) × 440. where n = number of semitones
+    double exponent = -semitones/12;            // I suppose the way the semitones are calculated requires that this exponent be negative (?)
+    int freq = round(pow(2,exponent) * 440);
     return freq;
-
-
-    // int octave = 4;
-    // char letter[3] = {'\0', '\0', '\0'};
-    // if (strlen(note) == 2)
-    // {
-    //     letter[0] = note[0];
-    //     octave = atoi(&note[1]);
-    // }
-    // else if (strlen(note) == 3)
-    // {
-    //     letter[0] = note[0];
-    //     letter[1] = note[1];
-    //     octave = atoi(&note[2]);
-    // }
-
-
-    // int semitones = 0;
-
-
-
-
-
-    // int indexA = 9;
-    // int indexletter = 0;
-    // string notes[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-    // for (int i = 0; i < 12; i++)
-    // {
-    //     if (strcmp(letter, notes[i]) == 0)
-    //         indexletter = i;
-    // }
-
-    // _Bool aboveItsA = false;
-    // _Bool higherOctave = false;
-    // if (indexletter > indexA)
-    //     aboveItsA = true;
-    // if (octave > 4)
-    //     higherOctave = true;
-
-    // if (!higherOctave)
-    // {
-    //     semitones = indexA - indexletter;
-    //     semitones = semitones + 12 * abs(4 - octave);
-    // }
-    // else if (higherOctave && !aboveitsA)
-    // {
-    //     semitones = indexA - indexletter;
-    //     semitones = semitones + 12 * abs(4 - octave);
-    // }
-
-
-
 }
 
 // Determines whether a string represents a rest
@@ -92,7 +40,7 @@ bool is_rest(string s)
 }
 
 
-double getSemitones(string note)
+double getSemitonesBrute(string note)
 {
     string notes[] = {"C0", "C#0", "D0", "D#0", "E0", "F0", "F#0", "G0", "G#0", "A0", "A#0", "B0",
                       "C1", "C#1", "D1", "D#1", "E1", "F1", "F#1", "G1", "G#1", "A1", "A#1", "B1",
@@ -106,7 +54,7 @@ double getSemitones(string note)
 
     int indexLetter = 0;
     int indexA4 = 57;
-    for (int i = 0; i < 96; i++)
+    for (int i = 0; i < 108; i++)
     {
         if (strcmp(note, notes[i]) == 0)
         {
@@ -119,5 +67,46 @@ double getSemitones(string note)
     //printf("indexA4 - indexLetter = %i \n", indexA4 - indexLetter);
 
     double semitones = indexA4 - indexLetter;
+    return semitones;
+}
+
+
+double getSemitones(string note)
+{
+    int octave;
+    char letter[3] = {'\0', '\0', '\0'};
+    if (strlen(note) == 2)
+    {
+        letter[0] = note[0];
+        octave = atoi(&note[1]);
+    }
+    else if (strlen(note) == 3)
+    {
+        letter[0] = note[0];
+        letter[1] = note[1];
+        octave = atoi(&note[2]);
+    }
+
+    string notes[] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+
+    int indexA = 9;
+    int indexletter = 0;
+    for (int i = 0; i < 12; i++)
+    {
+        if (strcmp(letter, notes[i]) == 0)
+            indexletter = i;
+    }
+
+    _Bool above = false;
+    if (octave > 4 || strcmp(note, "A#4") == 0 || strcmp(note, "B4") == 0)
+        above = true;
+
+    double semitones = 0.0;
+    semitones = indexA - indexletter;
+    if (!above)
+        semitones = semitones + 12 * abs(4 - octave);
+    else if (above)
+        semitones = semitones - 12 * abs(4 - octave);
+
     return semitones;
 }

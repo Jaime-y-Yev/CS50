@@ -14,4 +14,6 @@ int frequency(string note);
 // Determines whether a string represents a rest
 bool is_rest(string s);
 
+double getSemitonesBrute(string note);
+
 double getSemitones(string note);
