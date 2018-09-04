@@ -29,8 +29,8 @@ int duration(string fraction)
 // Calculates frequency (in Hz) of a note (ej. C5, G#2, Ab3)
 int frequency(string note)
 {
-    //double semitones = getSemitones(note);
-    double semitones = getSemitonesBrute(note);
+    double semitones = getSemitones(note);
+    //double semitones = getSemitonesBrute(note);
     //printf("semitones = %f \n", semitones);
 
     // The frequency f = 2^(n/12) × 440. where n = number of semitones
@@ -65,6 +65,22 @@ double getSemitonesBrute(string note)
     int indexA4 = 57;
     for (int i = 0; i < 108; i++)
     {
+        if (note[1] == 'b')
+        {
+            note[1] = '#';
+
+            if (note[0] == 'B')
+                note[0] = 'A';
+            else if (note[0] == 'A')
+                note[0] = 'G';
+            else if (note[0] == 'G')
+                note[0] = 'F';
+            else if (note[0] == 'E')
+                note[0] = 'D';
+            else if (note[0] == 'D')
+                note[0] = 'C';
+        }
+
         if (strcmp(note, notes[i]) == 0)
         {
             indexLetter = i;
@@ -102,6 +118,22 @@ double getSemitones(string note)
     int indexletter = 0;
     for (int i = 0; i < 12; i++)
     {
+        if (letter[1] == 'b')
+        {
+            letter[1] = '#';
+
+            if (letter[0] == 'B')
+                letter[0] = 'A';
+            else if (letter[0] == 'A')
+                letter[0] = 'G';
+            else if (letter[0] == 'G')
+                letter[0] = 'F';
+            else if (letter[0] == 'E')
+                letter[0] = 'D';
+            else if (letter[0] == 'D')
+                letter[0] = 'C';
+        }
+
         if (strcmp(letter, notes[i]) == 0)
             indexletter = i;
     }
