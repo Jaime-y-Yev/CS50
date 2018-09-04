@@ -95,16 +95,16 @@ double getSemitones(string note)
 {
     char letter[3] = {'\0', '\0', '\0'};    // eg. if note="B2" then letter="B", if note="C#6" then letter="C#""
     int octave;                             // eg. if D#4 then octave=4, if Gb3 then octave=3
-    if (strlen(note) == 2)                          // eg. note="B2"
-    {                                               //
-        letter[0] = note[0];                        //     letter="B"
-        octave = atoi(&note[1]);                    //     octave=2
+    if (strlen(note) == 2)                          // eg. if note="B2", then letter="B" and octave=2
+    {
+        letter[0] = note[0];
+        octave = atoi(&note[1]);
     }
-    else if (strlen(note) == 3)                     // eg. note="C#6"
-    {                                               //
-        letter[0] = note[0];                        //     letter="C#"
-        letter[1] = note[1];                        //
-        octave = atoi(&note[2]);                    //     octave=6
+    else if (strlen(note) == 3)                     // eg. note="C#6", then letter="C#" and octave=6
+    {
+        letter[0] = note[0];
+        letter[1] = note[1];
+        octave = atoi(&note[2]);
     }
 
     // All possible letters between C and B, ignoring the octave
@@ -137,16 +137,11 @@ double getSemitones(string note)
             indexletter = i;
     }
 
-    _Bool above = false;
-    if (octave > 4 || strcmp(note, "A#4") == 0 || strcmp(note, "B4") == 0)
-        above = true;
-
-    double semitones = 0.0;
-    semitones = indexA - indexletter;
-    if (!above)
-        semitones = semitones + 12 * abs(4 - octave);
-    else if (above)
+    // The number of semitones is the difference in positions within letters[], but the octave adjustment depends on the range (C0-A4) vs (A#4-C8)
+    double semitones = indexA - indexletter;
+    if (octave > 4 || strcmp(note, "A#4") == 0 || strcmp(note, "B4") == 0)      // for the range above A4 (A#4-C8)
         semitones = semitones - 12 * abs(4 - octave);
-
+    else                                                                        // for range below and including A4 (C0-A4)
+        semitones = semitones + 12 * abs(4 - octave);
     return semitones;
 }
