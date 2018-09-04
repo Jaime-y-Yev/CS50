@@ -6,14 +6,23 @@
 #include <stdio.h>
 
 #include "helpers.h"
+// Cannot include these declarations in helpers.h because check50 uses its own version (source: https://cs50.stackexchange.com/questions/27014/pset3-find-check50-frown-helpers-c-compiles-expected-exit-code-0-not-1)
+double getSemitonesBrute(string note);
+double getSemitones(string note);
+
 
 // Converts a fraction formatted as X/Y to eighths
 int duration(string fraction)
 {
-    int top = atoi(&fraction[0]);
-    int bottom = atoi(&fraction[1]);
+    double top = atoi(&fraction[0]);
+    double bottom = atoi(&fraction[2]);
 
-    int eighths = 8 * (top / bottom);
+    //printf("top = %f \n", top);
+    //printf("bottom = %f \n", bottom);
+
+    double eighths = 8 * (top / bottom);
+    //printf("eighths = %f \n", eighths);
+
     return eighths;
 }
 
