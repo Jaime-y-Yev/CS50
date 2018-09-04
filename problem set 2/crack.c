@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 char *crypt();
-_Bool compare();
+_Bool compare(char key[], char salt[], char hash[]);    // If the encrypted key equals the given hash, that key is the password
 int loopRecursive();
 int loopNonRecursive();
 
@@ -14,14 +14,13 @@ int loopNonRecursive();
 int main(int argc, string argv[])
 {
     // User may only input 2 command-line arguments
-    if (argc != 3)
+    if (argc != 2)
     {
-        printf("Usage: ./crack hash mode (mode=0 for recursive, mode=1 for nonrecursive)\n");
+        printf("Usage: ./crack hash\n");
         return 1;
     }
 
     string hash = argv[1];
-    int mode = atoi(argv[2]);
 
     char salt[3] = {hash[0], hash[1], '\0'};            // salt is 2 characters + 1 for null byte
     //printf("salt = %s \n", salt);
@@ -32,28 +31,23 @@ int main(int argc, string argv[])
         options[i] = 'A' + i;
         options[i+26] = 'a' + i;
     }
-    //for (int i = 0; i < 52; i++)
-        //printf("options[%i] = %c \n", i, options[i]);
 
     char key[6] = {'\0','\0','\0','\0','\0','\0'};      // key is 5 characters + 1 for null byte
 
-    /* Loop recursively (mode=0) or non-recursive (mode=1) through all possible combinations,
+    /* Loop through all possible combinations,
      * first through all one-letter combinations (i=0), then through all two-letter passwords (i=1),
-     * and so forth until looping finally through all five-letter passwords (i=4)
-    */
+     * and so forth until looping finally through all five-letter passwords (i=4) */
     for (int i = 0; i < 5; i++)
     {
-        if (mode == 0)
-            loopRecursive(i, 0, key, options, salt, hash);
-        else if (mode == 1)
-            loopNonRecursive(i, key, options, salt, hash);
+        loopRecursive(i, 0, key, options, salt, hash);          // can be done recursively or non-recursively
+        //loopNonRecursive(i, key, options, salt, hash);
     }
 
 
     return 0;
 }
 
-
+// If the encrypted key equals the given hash, that key is the password
 _Bool compare(char key[], char salt[], char hash[])
 {
     printf("key = %s \n", key);
@@ -62,7 +56,7 @@ _Bool compare(char key[], char salt[], char hash[])
     if (strcmp(encryptedPassword, hash) == 0)
     {
         printf("%s \n", key);
-        exit(0);//return true;
+        exit(0);                // If the key is found, terminate the program with exit code 0
     }
 
     return false;
@@ -71,8 +65,6 @@ _Bool compare(char key[], char salt[], char hash[])
 
 int loopRecursive(int i, int keyIndex, string key, string options, string salt, string hash)
 {
-    printf("recursive \n");
-
     for (int k0 = 0; k0 < 52; k0++)
     {
         key[keyIndex] = options[k0];
@@ -94,8 +86,6 @@ int loopRecursive(int i, int keyIndex, string key, string options, string salt, 
 
 int loopNonRecursive(int i, string key, string options, string salt, string hash)
 {
-    printf("nonrecursive \n");
-
     for (int k0 = 0; k0 < 52; k0++)
     {
         key[0] = options[k0];
