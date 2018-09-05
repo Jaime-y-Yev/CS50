@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     // parse command line
     float factor;
     sscanf(argv[1], "%f", &factor);
-    printf("factor = %f \n", factor);
+    printf("factor = %.2f \n", factor);
 
     if (factor == 0)
     {
