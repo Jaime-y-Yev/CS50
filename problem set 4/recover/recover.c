@@ -36,21 +36,14 @@ int main(int argc, char *argv[])
     }
 
     // Create output folder (image folder) if it doesn't already exist
-    int result = mkdir("./recovered", 0777);
-    printf("result = %i \n", result);
+    mkdir("./recovered", 0777);
 
     // First file ("-01.jpg") will contain junk before first image is found
-    char fileName[8] = {'\0'};                               // will contain the name "XXX.jpg\0"
-    printf("fileName = %s \n", fileName);
-    int imgCounter = -1;                            // image counter
-    sprintf(fileName, "%03i.jpg", imgCounter);      // create fileName "-01.jpg"
-    printf("fileName = %s \n", fileName);
+    int imgCounter = -1;                                        // image counter
+    char fullPath[28] = {'\0'};                                 // will contain the name "./recovered/XXX.jpg\0"
+    sprintf(fullPath, "./recovered/%03i.jpg", imgCounter);      // create fileName "./recovered/-01.jpg"
 
-    char fullPath[20] = {'\0'};                               // will contain the name "XXX.jpg\0"
-    sprintf(fullPath, "./recovered/%s", fileName);      // create fileName "-01.jpg"
-    printf("fullPath = %s \n", fileName);
-
-    FILE *img = fopen(fullPath, "w");               // open the junk file "-01.jpg"
+    FILE *img = fopen(fullPath, "w");                           // open the junk file "./recovered/-01.jpg"
 
     while (fread(buffer, 1, 512, inptr) == 512)        // blocks always 512, execpt at EOF
     {
@@ -61,10 +54,9 @@ int main(int argc, char *argv[])
            (buffer[3] & 0xf0) == 0xe0)
         {
             fclose(img);                                    // close the previous jpg
-            imgCounter++;                                   // increase image counter
-            sprintf(fileName, "%03i.jpg", imgCounter);      // create the new fileName
-            sprintf(fullPath, "./recovered/%s", fileName);      // create fileName "-01.jpg"
-            img = fopen(fullPath, "w");                     // open the new jpg
+            imgCounter++;                                               // increase image counter
+            sprintf(fullPath, "./recovered/%03i.jpg", imgCounter);      // create fileName "./recovered/XXX.jpg\0"
+            img = fopen(fullPath, "w");                                 // open the new jpg
         }
 
         // Write images "000.jpg" through "049.jph" (do not write "-01.jpg")
