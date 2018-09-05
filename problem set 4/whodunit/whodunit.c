@@ -1,4 +1,4 @@
-// Copies a BMP file
+// Reveals a hidden message in an image such as clue.bmp
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,13 +72,13 @@ int main(int argc, char *argv[])
 
             // read RGB triple from infile
             fread(&triple, sizeof(RGBTRIPLE), 1, inptr);
-            
-            // Turn red into white
+
+            // Turn red pixels into white pixels
             if (triple.rgbtRed == 0xff)
             {
                 triple.rgbtRed = 0x00;
             }
-            
+
             // Turn white pixels into black pixels
             if (triple.rgbtRed == 0x00 && triple.rgbtGreen == 0x00 && triple.rgbtBlue == 0x00)
             {
