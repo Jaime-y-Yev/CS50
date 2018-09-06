@@ -9,19 +9,17 @@
 
 #define HASH_MAX 30
 
-node *hashtable[HASH_MAX];      // Create hashtable (array of pointers to nodes NOT data). Reserve space in memory for future addresses to datam
+node *hashtable[HASH_MAX];      // create hashtable (= array of pointers to nodes, NOT data), ie, reserve space in memory for future addresses to data
 
-int index;
-int wordCount;
-int *wordCountPtr = &wordCount;
+int wordCount;      // global so that load() can count the words while it loads the dictionary and not require size() to redo the work
 
 
 // Simple hash function from the example in walkthrough video
 unsigned int hash(const char *str)
 {
     int sum = 0;
-    for (int j = 0; str[j] != '\0'; j++)
-        sum = str[j] + sum;
+    for (int i = 0; str[i] != '\0'; i++)
+        sum = str[i] + sum;
 
     return abs(sum % HASH_MAX);
 }
@@ -30,65 +28,64 @@ unsigned int hash(const char *str)
 // Returns true if word is in dictionary else false
 bool check(const char *word)
 {
-    char wordLower[strlen(word)+1];
-    for (index = 0; index < strlen(word); index++)
-        wordLower[index] = tolower(word[index]);
-    wordLower[strlen(word)] = '\0';
+    // Convert every word to all lowercase
+    int wordLength = strlen(word);
+    char wordLower[wordLength+1];           // +1 for null termination byte (ie. turn wordLower into a string)
+    for (int i = 0; i < wordLength; i++)
+        wordLower[i] = tolower(word[i]);
+    wordLower[wordLength] = '\0';
 
 
-    int hashNumber = hash(wordLower);
+    int hashNumber = hash(wordLower);       // calculate hash number for the current word
 
-    if (hashtable[hashNumber] == NULL)
+    if (hashtable[hashNumber] == NULL)      // the word obviously doesn't exist in the dictionary if their is no hash number for it
     {
         return 0;
     }
     else
     {
-        node *current = hashtable[hashNumber]; // Declare pointer current
+        node *current = hashtable[hashNumber];          // set a pointer to the row in which the word would be stored (if it exists in the dictionary)
 
-        int found;
-        while (current->next != NULL)
+        // Search through all the nodes in this row for the current word
+        while (current != NULL)
         {
-            found = strcmp(current->word, wordLower);
-            if (found == 0)
+            if (strcmp(current->word, wordLower) == 0)      // strcmp() = 0 means the word was found
                 return 1;
 
             current = current->next;
         }
-
-        found = strcmp(current->word, wordLower);
-        if (found == 0)
-            return 1;
     }
 
-    return 0;
+    return 0;           // if it got this far, the current word is not in the dictionary
 }
 
 
 // Loads dictionary into memory, returning true if successful else false
 bool load(const char *dictionary)
 {
-    for (index = 0; index < HASH_MAX; index++)
-        hashtable[index] = NULL;
+    int i = 0;
+
+    for (i = 0; i < HASH_MAX; i++)
+        hashtable[i] = NULL;
 
     FILE *dictFile = fopen(dictionary, "r");
 
-    *wordCountPtr = 0;
+    wordCount = 0;
     char c;
     char currWord[LENGTH];
     while ((c = fgetc(dictFile)) != EOF) // Looping through entire file
     {
-        index = 0;
+        i = 0;
         while (c != '\n')
         {
-            currWord[index] = c;
-            index++;
+            currWord[i] = c;
+            i++;
             c = fgetc(dictFile);
         }
-        currWord[index] = '\0';
+        currWord[i] = '\0';
 
 
-       (*wordCountPtr)++;
+        wordCount++;
 
         int hashNumber = hash(currWord);
 
@@ -98,8 +95,8 @@ bool load(const char *dictionary)
             if (hashtable[hashNumber] == NULL)
                 return 0;
 
-            for (index = 0; index < strlen(currWord)+1; index++)
-                hashtable[hashNumber]->word[index] = currWord[index];
+            for (i = 0; i < strlen(currWord)+1; i++)
+                hashtable[hashNumber]->word[i] = currWord[i];
 
 
             hashtable[hashNumber]->next = NULL;
@@ -119,8 +116,8 @@ bool load(const char *dictionary)
 
             current = current->next;                        // Move helper to the new next
 
-            for (index = 0; index < strlen(currWord)+1; index++)
-                current->word[index] = currWord[index];
+            for (i = 0; i < strlen(currWord)+1; i++)
+                current->word[i] = currWord[i];
 
             current->next = NULL;
         }
@@ -142,11 +139,11 @@ unsigned int size(void)
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void)
 {
-    for (index = 0; index < HASH_MAX; index++)
+    for (int i = 0; i < HASH_MAX; i++)
     {
-        if (hashtable[index] != NULL)
+        if (hashtable[i] != NULL)
         {
-            node *current = hashtable[index];           // Declare pointer current and make it point to beginning of list
+            node *current = hashtable[i];           // Declare pointer current and make it point to beginning of list
             node *prev = NULL;
 
             while (current->next != NULL)
@@ -159,7 +156,7 @@ bool unload(void)
             free(current);                      // Free entire node that current points to
         }
 
-        if (index == HASH_MAX-1)
+        if (i == HASH_MAX-1)
             return 1;
     }
 
