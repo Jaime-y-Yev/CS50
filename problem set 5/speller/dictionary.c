@@ -65,16 +65,19 @@ bool load(const char *dictionary)
 {
     int i = 0;
 
+    // Make sure all nodes are not pointing anywhere
     for (i = 0; i < HASH_MAX; i++)
         hashtable[i] = NULL;
 
     FILE *dictFile = fopen(dictionary, "r");
 
+    // Looping through entire dictionary
     wordCount = 0;
-    char c;
     char currWord[LENGTH];
-    while ((c = fgetc(dictFile)) != EOF) // Looping through entire file
+    char c;
+    while ((c = fgetc(dictFile)) != EOF)
     {
+        // Turn the current dictionary word into a null-terminated string by swapping the '\n' in the dictionary with '\0'
         i = 0;
         while (c != '\n')
         {
@@ -83,48 +86,50 @@ bool load(const char *dictionary)
             c = fgetc(dictFile);
         }
         currWord[i] = '\0';
+        wordCount++;                // each time a newline appears, add to the word counter (avoids needing a separate function to count words in the hash table)
 
+        int hashNumber = hash(currWord);        // so the dictionary word can be stored in its proper hash table row
+        int wordLength = strlen(currWord);
 
-        wordCount++;
-
-        int hashNumber = hash(currWord);
-
+        // If no row exists yet for that number, start a new row
         if (hashtable[hashNumber] == NULL)
         {
-            hashtable[hashNumber] = malloc(sizeof(node));   // Spawn node from hash number ( = from locker box)
+            hashtable[hashNumber] = malloc(sizeof(node));   // spawn node for this new hash number (= from locker box)
             if (hashtable[hashNumber] == NULL)
                 return 0;
 
-            for (i = 0; i < strlen(currWord)+1; i++)
+            // Copy every character (including null terminator) into the word of the first (and only) node in this new row
+            for (i = 0; i < wordLength+1; i++)
                 hashtable[hashNumber]->word[i] = currWord[i];
 
-
-            hashtable[hashNumber]->next = NULL;
+            hashtable[hashNumber]->next = NULL;     // make sure this first node is not pointing anywhere (since it should be the only node in this new row)
         }
+        // If a row already exists of this hash number, add the dictionary word to the end of that row
         else
         {
-            node *current = NULL;
-            current = hashtable[hashNumber];                // Make current (pointer) point to the same spot as hashtable pointer
+            node *current = hashtable[hashNumber];          // make current (a pointer to a node) point to the same spot as the hashtable pointer (which already points to the first node in that row)
 
-            while (current->next != NULL)                   // If you are not at end of list, move to end of list
-                current = current->next;                    // Move your helper pointer from one node to another until "next" struct field is NULL (you are at end)
+            // Loop until the end of the row
+            while (current->next != NULL)
+                current = current->next;                    // move your helper pointer from one node to another until "next" field of the node is NULL (you are at the last node)
 
-            // Access the struct and add info
-            current->next = malloc(sizeof(node));           // Spawn node from pointer next within struct. You now have a new node with value and next field
+            // Tack on a new node to the end of the row
+            current->next = malloc(sizeof(node));           // first, spawn a node to point to from the current last node, effectively making it now the second-to-last node (which points to the last node)
             if (hashtable[hashNumber] == NULL)
                 return 0;
 
-            current = current->next;                        // Move helper to the new next
+            current = current->next;                        // move to this newly-created last node
 
-            for (i = 0; i < strlen(currWord)+1; i++)
+            // Copy every character (including null terminator) into the word of this last node
+            for (i = 0; i < wordLength+1; i++)
                 current->word[i] = currWord[i];
 
-            current->next = NULL;
+            current->next = NULL;       // make sure this last node is not pointing anywhere (otherwise it wouldn't be the last node)
         }
     }
 
+    // You've successfully looped through every word in the dictionary and added it to the hash table so close the dictionary and exit with code 1
     fclose(dictFile);
-
     return 1;
 }
 
@@ -132,33 +137,36 @@ bool load(const char *dictionary)
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
 unsigned int size(void)
 {
-    return wordCount;
+    return wordCount;           // no separate function neeeded since load() counted the words as it was loading them and saved the count in this global variable
 }
 
 
-// Unloads dictionary from memory, returning true if successful else false
+// Unloads dictionary from (ie, frees up the hash table), returning true if successful else false
 bool unload(void)
 {
+    // Loop through every row and, in turn, every node in each row
     for (int i = 0; i < HASH_MAX; i++)
     {
-        if (hashtable[i] != NULL)
+        if (hashtable[i] != NULL)               // ignore empty rows
         {
-            node *current = hashtable[i];           // Declare pointer current and make it point to beginning of list
-            node *prev = NULL;
+            node *current = hashtable[i];           // declare a helper pointer and make it point to beginning of the current row
+            node *next = NULL;                      // temporary pointer to not lose track of current node
+            //node *prev = NULL;                      // temporary pointer to not lose track of current node
 
+            // Loop to the end of the row
             while (current->next != NULL)
             {
-                prev = current;                 // Store previous position of current
-                current = current->next;        // Move current to the next position after
-                free(prev);                     // Free entire node that current points to
+                next = current->next;               // keep track of where the next node is
+                free(current);                      // free the current node
+                current = next;                     // move current to the next node
             }
-
-            free(current);                      // Free entire node that current points to
+            free(current);                          // free entire node that current points to
         }
 
+        // You've reached and emptied the last row so exit with code 1
         if (i == HASH_MAX-1)
             return 1;
     }
 
-    return 0;
+    return 0;   // something must have gone wrong
 }
