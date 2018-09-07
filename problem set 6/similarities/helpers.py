@@ -108,36 +108,79 @@ def distances(a, b):
     printMatrix(newMatrix)
 
 
-    newMatrix2 = [[0 for x in range(originalLenB+3)] for y in range(originalLenA+3)]
-    print("newMatrix2 =")
-    printMatrix(newMatrix2)
+    # newMatrix2 = [[0 for x in range(originalLenB+3)] for y in range(originalLenA+3)]
+    # print("newMatrix2 =")
+    # printMatrix(newMatrix2)
 
 
-    for i in range(originalLenB+3):
-        for j in range(originalLenA+3):
+    # for i in range(originalLenB+3):
+    #     for j in range(originalLenA+3):
+    #         if i < 2 or j < 2:
+    #             if i+j <= 2:
+    #                 newMatrix2[j][i] = (" ", " ")
+    #             else:
+    #                 if j == 0:
+    #                     newMatrix2[j][i] = (str(b[i-2]), " ")
+    #                 elif j == 1:
+    #                     newMatrix2[j][i] = (str(i-2), " ")
+    #                 elif i == 0:
+    #                     newMatrix2[j][i] = (str(a[j-2]), " ")
+    #                 elif i == 1:
+    #                     newMatrix2[j][i] = (str(j-2), " ")
+    #         else:
+    #             newMatrix2[j][i] = newMatrix[j-2][i-2]
+
+
+    # print("newMatrix2 =")
+    # printMatrix(newMatrix2)
+
+    return newMatrix
+
+def addHeadings(Matrix, a, b):
+
+    print("a = " + str(a))
+    for i in range(len(a)+3):
+        if i < len(a):
+            print("a["+str(i)+"] = " + str(a[i]))
+
+    print("b = " + str(b))
+    for i in range(len(b)+3):
+        if i < len(b):
+            print("b["+str(i)+"] = " + str(b[i]))
+
+
+
+    MatrixWithHeadings = [[0 for x in range(len(b)+3)] for y in range(len(a)+3)]
+    print("MatrixWithHeadings =")
+    printMatrix(MatrixWithHeadings)
+
+
+    for i in range(len(b)+3):
+        for j in range(len(a)+3):
             if i < 2 or j < 2:
                 if i+j <= 2:
-                    newMatrix2[j][i] = (" ", " ")
+                    MatrixWithHeadings[j][i] = (" ", " ")
                 else:
-                    if j == 0:
-                        newMatrix2[j][i] = (str(b[i-2]), " ")
+                    if j == 0 and i < len(b)+3:
+                        MatrixWithHeadings[j][i] = (str(b[i-3]), " ")
                     elif j == 1:
-                        newMatrix2[j][i] = (str(i-2), " ")
-                    elif i == 0:
-                        newMatrix2[j][i] = (str(a[j-2]), " ")
+                        MatrixWithHeadings[j][i] = (str(i-2), " ")
+                    elif i == 0 and j < len(a)+3:
+                        MatrixWithHeadings[j][i] = (str(a[j-3]), " ")
                     elif i == 1:
-                        newMatrix2[j][i] = (str(j-2), " ")
+                        MatrixWithHeadings[j][i] = (str(j-2), " ")
             else:
-                newMatrix2[j][i] = newMatrix[j-2][i-2]
+                MatrixWithHeadings[j][i] = Matrix[j-2][i-2]
 
 
-    print("newMatrix2 =")
-    printMatrix(newMatrix2)
+    print("MatrixWithHeadings =")
+    printMatrix(MatrixWithHeadings)
 
-    return newMatrix2
+    return MatrixWithHeadings
+
+
 
 # a = "Harvard"
 # b = "Yale"
-
 # Matrix = distances(a,b)
 # printMatrix(Matrix)

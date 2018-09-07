@@ -4,7 +4,7 @@ from flask import Flask, abort, redirect, render_template, request
 from html import escape
 from werkzeug.exceptions import default_exceptions, HTTPException
 
-from helpers import distances, Operation
+from helpers import distances, Operation, addHeadings
 
 # Web app
 app = Flask(__name__)
@@ -37,6 +37,9 @@ def score():
 
     # Score files
     matrix = distances(s1, s2)
+
+    # check50 seems to score the output of distances() so tack on headings after creating matrix and before sending it to html
+    MatrixWithHeadings = addHeadings(matrix, s1, s2)
 
     # Extract operations from table
     operations = []
@@ -84,8 +87,9 @@ def score():
         transitions.append((s, str(operation), description))
     transitions.append((s2, None, None))
 
+
     # Output comparison
-    return render_template("score.html", matrix=matrix, s1=s1, s2=s2, operations=transitions)
+    return render_template("score.html", matrix=MatrixWithHeadings, s1=s1, s2=s2, operations=transitions)   # was matrix=matrix but I want to pass it with the headings
 
 
 @app.errorhandler(HTTPException)
