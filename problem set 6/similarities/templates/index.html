@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <h1>Please input your strings</h1>
+    <form action="/score" method="post">
+        <input name="string1" placeholder="String1" type="text"/>
+        <input name="string2" placeholder="String2" type="text"/>
+        
+        <input type="submit" value="Submit"/>
+    </form>
+
+{% endblock %}

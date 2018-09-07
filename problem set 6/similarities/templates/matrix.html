@@ -1,0 +1,17 @@
+<html>
+
+<body>
+     <table class="table table-sm">     <!-- copied class="table table-sm" from log.hmtl to get lines between the matrix rows -->
+         <tbody>
+         {% for row in matrix %}
+             <tr>
+             {% for column in row %}
+                 <td>{{ column[0] }}</td>
+             {% endfor %}
+             </tr>
+         {% endfor %}
+         </tbody>
+     </table>
+ </body>
+
+ </html>

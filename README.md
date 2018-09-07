@@ -12,3 +12,4 @@ Problems in 2017 but not in 2018:
 Incomplete problems
 
     2018 Pset4: resize (doesn't reduce size)
+    2018 Pset6: sentimental, similarities (1 check doesn't passs)
