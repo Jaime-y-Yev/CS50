@@ -8,13 +8,14 @@ int getCardSum();
 
 int main(void)
 {
-    // Requess card number from user
+    // Request card number from user
     printf("Number: ");
     long long cardNum = get_long_long();
 
+    // Calculate the sum based on the card number
     int cardSum = getCardSum(cardNum);
-    //printf("cardSum = %i", cardSum);
 
+    // The mod10 of the sum of a valid card number is always 0
     if (cardSum % 10 == 0)
         printf("%s\n", getCardType(cardNum));
     else
@@ -23,7 +24,7 @@ int main(void)
     return 0;
 }
 
-// Return card company name based on card number input
+// Returns a card company name based on card number
 string getCardType(long long cardNum)
 {
     if (cardNum >= 5100000000000000 && cardNum < 5600000000000000)
@@ -38,7 +39,7 @@ string getCardType(long long cardNum)
         return "INVALID\n";
 }
 
-// Return a processed total based on the card number input
+// Returns a processed total based on the card number
 int getCardSum(long long cardNum)
 {
     int sumOdd = 0;
