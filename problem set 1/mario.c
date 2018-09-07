@@ -16,7 +16,7 @@ int main(void)
     int i, j;
     for (i = height; i >= 1; i--)
     {
-        for (j = i - 1; j > 0; j--)         // spaces before the hashes before the repeating block
+        for (j = i - 1; j >= 1; j--)        // spaces before the hashes before the repeating block
             printf(" ");
 
         for (j = 0; j < height - i; j++)    // hashes before the repeating block
