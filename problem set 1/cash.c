@@ -26,7 +26,7 @@ int main(void)
     // Each loop extracts amount of quarters, dimes, and nickels (pennies processed after the loop)
     for (int i = 0; i < 3; i++)
     {
-        int coinValue = (25 - i * (20 - i * 5));        // coin values 25, 10, 5 can be hardcoded, this is just a fancy, dynamic way
+        int coinValue = 25 - i * (20 - i * 5);          // coin values 25, 10, 5 can be hardcoded, this is just a fancy, dynamic way
 
         numCoins = remain / coinValue;                  // maximum number quarters/dimes/nickels in the remaining cash
 
