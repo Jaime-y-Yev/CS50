@@ -66,7 +66,7 @@ int main(int argc, string argv[])
                 cipherLetterIsDown = true;
 
             // If plainText case and cipherText case don't match
-            if ((plainLetterIsUp && !cipherLetterIsUp) || (plainLetterIsDown && !cipherLetterIsDown))
+            if ((plainLetterIsUp != cipherLetterIsUp) || (plainLetterIsDown != cipherLetterIsDown))
             {
                 cipherText[i] = cipherText[i] - 26;
 
