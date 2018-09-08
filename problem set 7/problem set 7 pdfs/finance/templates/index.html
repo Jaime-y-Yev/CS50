@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+    <table>
+        {% for row in chart %}
+        <tr>
+            {% for key, value in row.items() %}
+                {% if row == chart[0] %}
+                    <th> {{ key }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for key, value in row.items() %}
+                {% if key == 'cash' or key == 'grand_total' %}
+                    <td> {{ key }} </td>
+                    <td></td>
+                    <td></td>
+                    <td> {{ value | usd }} </td>
+                {% elif key == 'symbol' or key == 'SUM(shares)' %}
+                    <td> {{ value }} </td>
+                {% else %}
+                    <td> {{ value | usd }} </td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

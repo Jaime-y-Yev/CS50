@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+    <table>
+        {% for row in chart %}
+        <tr>
+            {% for key, value in row.items() %}
+                {% if row == chart[0] %}
+                    <th> {{ key }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for key, value in row.items() %}
+                <td> {{ value }} </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
