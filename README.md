@@ -1,4 +1,4 @@
-Solutions to the problem sets in Harvard's CS50 2018 course.
+Solutions to the problem sets in Harvard's CS50 2018 course. Whenever available, the "more comfortable" (ie. harder) version was done.
 
 Problems in 2018 but not in 2017:
 
