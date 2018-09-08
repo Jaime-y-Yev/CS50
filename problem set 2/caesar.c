@@ -32,7 +32,7 @@ int main(int argc, string argv[])
         {
             cipherText[i] = (plainText[i] + key) % 'z';     // wrap around 'z'
 
-            // if encrypted character lands on special character, shift into the accepted range
+            // If encrypted character lands on special character, shift into the accepted range
             if (cipherText[i] < 'A')
             {
                 cipherText[i] = cipherText[i] + 96;

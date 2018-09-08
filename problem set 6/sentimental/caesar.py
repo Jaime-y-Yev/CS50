@@ -1,8 +1,6 @@
 import sys
-import string
 
-# Get the number of blocks from the user, must be between 0 and 23, both included
-#while True:
+# User may only input 2 command-line arguments, the 2nd being a positive number
 try:
     if len(sys.argv) != 2:
         print("Usage: ./caesar key")
@@ -17,34 +15,40 @@ except ValueError:
     print("Enter a number for the key")
     sys.exit(0)
 
-plaintext = input("plaintext: ")
+# Prompt for string to encrypt
+plainText = input("plaintext: ")
 
-encryptableLetters = string.ascii_uppercase + string.ascii_lowercase
+# Only encrypt A-Z and a-z characters
+encryptableLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-ciphertext = []
-ciphertextChar = []
-for i in range(len(plaintext)):
-    if plaintext[i] in encryptableLetters:
-        ciphertext.append((ord(plaintext[i]) + key) % ord('z'))
+# Rotate every character a value of key up the alphabet, ignores special characters
+cipherText = []
+for plainLetter in plainText:
 
-        if ciphertext[i] < ord('A'):
-            ciphertext[i] = ciphertext[i] + 96
+    # Encrypt characters between A-Z or a-z only
+    if plainLetter in encryptableLetters:
+        cipherLetter = (ord(plainLetter) + key) % ord('z')  # wrap around 'z'
 
-            if ciphertext[i] > ord('z') and ciphertext[i] < 150:
-                ciphertext[i] = (ciphertext[i] % ord('z')) + 96
-            elif ciphertext[i] >= 150:
-                ciphertext[i] = (ciphertext[i] % ord('z')) + 70
+        # If encrypted character lands on special character, shift into the accepted range
+        if cipherLetter < ord('A'):
+            cipherLetter = cipherLetter + 96
+
+            # Some characters may land beyond 'z' but will loop around differently depending on where they land
+            if cipherLetter > ord('z') and cipherLetter < 150:
+                cipherLetter = (cipherLetter % ord('z')) + 96
+            elif cipherLetter >= 150:
+                cipherLetter = (cipherLetter % ord('z')) + 70
+
+        cipherLetter = chr(cipherLetter)
 
     else:
-        ciphertext.append(plaintext[i])
+        cipherLetter = plainLetter
 
-    if type(ciphertext[i]) != str:
-        ciphertextChar.append(chr(ciphertext[i]))
-    else:
-        ciphertextChar.append(ciphertext[i])
 
-#print(ciphertext)
+    cipherText.append(cipherLetter)
+
+
 print("ciphertext: ", end="")
-for char in ciphertextChar:
-    print(char, end="")
+for cipherLetter in cipherText:
+    print(cipherLetter, end="")
 print()
