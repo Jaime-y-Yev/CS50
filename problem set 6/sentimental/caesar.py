@@ -13,7 +13,7 @@ try:
 
 except ValueError:
     print("Enter a number for the key")
-    sys.exit(0)
+    sys.exit(1)
 
 # Prompt for string to encrypt
 plainText = input("plaintext: ")
