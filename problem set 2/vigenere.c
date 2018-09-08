@@ -39,18 +39,34 @@ int main(int argc, string argv[])
         // If not a special character, encrypt plainText[i] and loop through key
         if ((plainText[i] >= 'A' && plainText[i] <= 'Z') || (plainText[i] >= 'a' && plainText[i] <= 'z'))
         {
-            // Shift plaintext up according to the current key character
             int currentKeyChar = key[keyIndex % keyLength];         // loop through key
 
-            if (currentKeyChar >= 'A' && currentKeyChar <= 'Z')         // uppercase filter
-                cipherText[i] = plainText[i] + (currentKeyChar % 'A');
-            else if (currentKeyChar >= 'a' && currentKeyChar <= 'z')    // lowercase filter
-                cipherText[i] = plainText[i] + (currentKeyChar % 'a');
+            // Conditionally adjust key according to upper or lower case eg. key=a or key=A means shift=0, key=B or key=B means shift=1
+            int shift = 0;
+            if (currentKeyChar >= 'A' && currentKeyChar <= 'Z')
+                shift = currentKeyChar % 'A';
+            else if (currentKeyChar >= 'a' && currentKeyChar <= 'z')
+                shift = currentKeyChar % 'a';
 
+            cipherText[i] = plainText[i] + shift;
+
+
+            // Find plainText case and cipherText case
+            _Bool plainLetterIsUp = false;
+            _Bool cipherLetterIsUp = false;
+            _Bool plainLetterIsDown = false;
+            _Bool cipherLetterIsDown = false;
+            if (plainText[i] >= 'A' && plainText[i] <= 'Z')
+                plainLetterIsUp = true;
+            if (cipherText[i] >= 'A' && cipherText[i] <= 'Z')
+                cipherLetterIsUp = true;
+            if (plainText[i] >= 'a' && plainText[i] <= 'z')
+                plainLetterIsDown = true;
+            if (cipherText[i] >= 'a' && cipherText[i] <= 'z')
+                cipherLetterIsDown = true;
 
             // If plainText case and cipherText case don't match
-            if (((plainText[i] >= 'A' && plainText[i] <= 'Z') && (cipherText[i] < 'A' || cipherText[i] > 'Z')) ||
-                ((plainText[i] >= 'a' && plainText[i] <= 'z') && (cipherText[i] < 'a' || cipherText[i] > 'z')))
+            if ((plainLetterIsUp && !cipherLetterIsUp) || (plainLetterIsDown && !cipherLetterIsDown))
             {
                 cipherText[i] = cipherText[i] - 26;
 
@@ -61,7 +77,7 @@ int main(int argc, string argv[])
                     cipherText[i] = (cipherText[i] % 122) + 70;
             }
 
-            keyIndex++;
+            keyIndex++;     // pick the next key character to be used in the following loop
         }
         // Do not encrypt special characters, do not loop through key
         else
