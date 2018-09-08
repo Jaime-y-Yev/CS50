@@ -62,7 +62,7 @@ void compare(char key[], char salt[], char hash[])
     if (strcmp(encryptedPassword, hash) == 0)
     {
         printf("The password is: %s \n", key);
-        exit(0);                // If the key is found, terminate the program with exit code 0
+        exit(0);                // if the key is found, terminate the program with exit code 0
     }
 }
 
@@ -73,7 +73,7 @@ void loopNonRecursive(int keyLength, string key, string options, string salt, st
     {
         key[0] = options[o0];
 
-        if (keyLength < 1)                              // if in the one-letter loop, compare each and every ONE-LETTER combo
+        if (keyLength < 1)                      // if in the one-letter loop, compare each and every ONE-LETTER combo
         {
             compare(key, salt, hash);
         }
@@ -83,7 +83,7 @@ void loopNonRecursive(int keyLength, string key, string options, string salt, st
             {
                 key[1] = options[o1];
 
-                if (keyLength < 2)                                  // if in the two-letter loop, compare each and every TWO-LETTER combo
+                if (keyLength < 2)                          // if in the two-letter loop, compare each and every TWO-LETTER combo
                 {
                     compare(key, salt, hash);
                 }
