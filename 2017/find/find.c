@@ -20,17 +20,16 @@ int main(int argc, string argv[])
 
 
     // Fill haystack with ints
-    int size;
     int haystack[MAX_HAYSTACK_SIZE];
-    for (size = 0; size < MAX_HAYSTACK_SIZE; size++)
-        haystack[size] =  get_int();
+    for (int i = 0; i < MAX_HAYSTACK_SIZE; i++)
+        haystack[i] =  get_int();
 
 
     // Sort the haystack
     sort(haystack, MAX_HAYSTACK_SIZE);
 
     // Try to find the needle in the haystack
-    bool found = search(needle, haystack, size);
+    bool found = search(needle, haystack, MAX_HAYSTACK_SIZE);
     if (found)
     {
         printf("\nFound needle in haystack!\n\n");
