@@ -5,20 +5,24 @@
 {% endblock %}
 
 {% block main %}
-    <table>
-        {% for row in chart %}
+    <table class="table table-sm">  <!-- general formatting, especially lines between rows -->
+        <thead>
+            <tr>
+                <th>Symbol</th><th>Shares</th><th>Price</th><th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for transaction in table %}
         <tr>
-            {% for key, value in row.items() %}
-                {% if row == chart[0] %}
-                    <th> {{ key }}</th>
+            {% for key, value in transaction.items() %}
+                {% if key == 'symbol' or key == 'shares' or key == 'time' %}
+                    <td> {{ value }} </td>
+                {% elif key == 'price' %}
+                    <td> {{ value  | usd }} </td>
                 {% endif %}
             {% endfor %}
         </tr>
-        <tr>
-            {% for key, value in row.items() %}
-                <td> {{ value }} </td>
-            {% endfor %}
-        </tr>
         {% endfor %}
+        </tbody >
     </table>
 {% endblock %}

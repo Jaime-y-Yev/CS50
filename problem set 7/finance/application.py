@@ -42,23 +42,25 @@ def index():
     """Show portfolio of stocks"""
 
     # Get list of symbols their total shares
-    symbol_shares = db.execute("SELECT symbol, SUM(shares) FROM transactions WHERE username = :username GROUP BY symbol", username=session["username"])
+    symbol_shares = db.execute("SELECT symbol, SUM(shares) AS shares FROM transactions WHERE username = :username GROUP BY symbol", username=session["username"])
 
     # Determine the holdings for each symbol and the total holdings
     total_holdings = 0
     for company in symbol_shares:
-        # Find out total worth of the symbol
+        # Find out name and total worth of the symbol
         symbol = company['symbol']              # get the current symbol
         name_price_symbol = lookup(symbol)      # look up the name and price
+        name = name_price_symbol['name']        # record the name
         price = name_price_symbol['price']      # record the price
-        company['price'] = price                # associate the price with the current symbol
+        company['name'] = name                  # store name in symbol_shares next to its symbol
+        company['price'] = price                # store price in symbol_shares next to its symbol
 
         # Calculate holding = shares * value / shares
-        holding = int(company['SUM(shares)']) * price   # calculate total current worth of shares for that symbol
+        holding = int(company['shares']) * price   # calculate total current worth of shares for that symbol
+        # holding = int(company['SUM(shares)']) * price   # calculate total current worth of shares for that symbol
         company['holding'] = holding                    # associate the total current worth  with the current symbol
 
         total_holdings = total_holdings + holding         # sum up all the holdings for all the symbols
-
 
     # Determine cash and overall total
     cash = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
@@ -67,8 +69,9 @@ def index():
     total = total_holdings + cash[0]['cash']
     symbol_shares.append({'total': total})
 
+
     # Send the symbols, shares, price, and totals to the home page
-    return render_template("index.html", chart=symbol_shares)
+    return render_template("index.html", table=symbol_shares)
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -139,9 +142,9 @@ def buy():
 def history():
     """Show history of transactions"""
 
-    rows = db.execute("SELECT * FROM transactions WHERE username = :username ORDER BY time", username=session["username"])
+    transactions = db.execute("SELECT * FROM transactions WHERE username = :username ORDER BY time", username=session["username"])
 
-    return render_template("index.html", chart=rows)
+    return render_template("history.html", table=transactions)
 
 
 @app.route("/login", methods=["GET", "POST"])
