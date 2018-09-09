@@ -79,31 +79,34 @@ def buy():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
+        # Ensure symbol was submitted
         if not request.form.get("symbol"):
             return apology("must provide symbol", 400)
 
-        name_price_symbol = lookup(request.form.get("symbol"))
-
-        # Ensure password was submitted
+        # Ensure symbol exists
+        symbol = request.form.get("symbol")
+        name_price_symbol = lookup(symbol)
         if name_price_symbol == None:
             return apology("could not find symbol", 400)
 
-        # Ensure username was submitted
-        if request.form.get("shares").isdigit() == False:
-            return apology("must input a whole number of shares", 400)
-        elif int(request.form.get("shares")) <= 0:
-            return apology("must input positive number of shares", 400)
-        elif request.form.get("shares").isnumeric == False:
-            return apology("must input a number of shares", 400)
+        # Ensure number of shares was submitted
+        if not request.form.get("shares"):
+            return apology("must provide number of shares", 400)
 
+        shares = request.form.get("shares")
+
+        # Ensure number of shares is purely a whole positive number
+        if shares.isdigit() == False:
+            return apology("must input a whole number of shares", 400)
+        elif int(shares) <= 0:
+            return apology("must input positive number of shares", 400)
+        elif shares.isnumeric == False:
+            return apology("must input a number of shares", 400)
 
         shares = int(request.form.get("shares"))
 
-        name = name_price_symbol["name"]
+        # Calculate the cost for this symbol and number of shares
         price = float(name_price_symbol["price"])
-        symbol = request.form.get("symbol")
-
         cost = shares * price
 
         cash = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
@@ -111,11 +114,15 @@ def buy():
 
         cash = cash - cost
 
+        # Make sure user has enough cash for this purchase
         if cash < 0:
            return apology("nigga u poor", 403)
 
+
+        # Add this transaction to the history
         db.execute('INSERT INTO "transactions" ("username","symbol","price", "shares") VALUES (:username,:symbol,:price, :shares)', username=session["username"], symbol=symbol, price=price, shares=shares)
 
+        # Update the users cash amount
         db.execute('UPDATE "users" SET "cash"= :cash WHERE "rowid" = :id', cash=cash, id=session["user_id"])
 
 
