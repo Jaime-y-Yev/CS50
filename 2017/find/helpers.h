@@ -6,7 +6,7 @@
  *
  * Helper functions for Problem Set 3.
  */
- 
+
 #include <cs50.h>
 
 /**
@@ -14,7 +14,5 @@
  */
 bool search(int value, int values[], int n);
 
-/**
- * Sorts array of n values.
- */
+// Bubble sort in ascending order
 void sort(int values[], int n);

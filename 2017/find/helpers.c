@@ -50,25 +50,26 @@ bool search(int value, int values[], int n) // linear search
     }
 }
 
-/**
- * Sorts array of n values.
- */
-void sort(int values[], int n) // bubble sort
+// Bubble sort in ascending order
+void sort(int values[], int n)
 {
-    int c = 1; // counts swaps, initially 1 to enter while loop
-    // sort until no changes are counted
-    while (c != 0)
+    int changes = 1; // counts swaps, initially 1 to enter while loop
+
+    // Sort until no changes are detected
+    while (changes != 0)
     {
-        c = 0; // reset counter
-        // loop through adjacent pairs of elements
+        changes = 0; // reset counter
+
+        // Loop through adjacent pairs of elements recording if any changes have occured
         for (int i = 0; i < n - 1; i++)
         {
-            if (values[i] > values[i + 1]) // left value is bigger
+            // If the current value is larger than the next value, swap them
+            if (values[i] > values[i + 1])
             {
-                int aux = values[i]; // copy left value
-                values[i] = values[i + 1]; // left takes on right´s value
-                values[i + 1] = aux; // right filled with left's original value
-                c++; // swap recorded
+                int aux = values[i];            // copy left's original value
+                values[i] = values[i + 1];      // left takes on right's value
+                values[i + 1] = aux;            // right filled with left's original value
+                changes++;                      // make a note that a change has ocurred
             }
         }
     }
