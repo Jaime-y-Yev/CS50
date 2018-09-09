@@ -6,29 +6,33 @@
 
 {% block main %}
     <table class="table table-sm">  <!-- general formatting, especially lines between rows -->
-        <tr>
-            <th>Symbol</th><th>Shares</th><th>Price</th><th>TOTAL</th>
-        </tr>
-        {% for row in chart %}
-        <tr>
-            {% for key, value in row.items() %}
-                {% if key == 'cash' %}
-                    <td> CASH </td>
-                    <td></td>
-                    <td></td>
-                    <td> {{ value | usd }} </td>
-                {% elif key == 'total' %}
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><span style="font-weight:bold">{{ value | usd }}</span></td>
-                {% elif key == 'symbol' or key == 'SUM(shares)' %}
-                    <td> {{ value }} </td>
-                {% else %}
-                    <td> {{ value | usd }} </td>
-                {% endif %}
+        <thead>
+            <tr>
+                <th>Symbol</th><th>Shares</th><th>Price</th><th>TOTAL</th>
+            </tr>
+        </thead>
+        <tbody >
+            {% for row in chart %}
+            <tr>
+                {% for key, value in row.items() %}
+                    {% if key == 'symbol' or key == 'SUM(shares)' %}
+                        <td>{{ value }}</td>
+                    {% elif key == 'cash' %}
+                        <td>CASH</td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ value | usd }}</td>
+                    {% elif key == 'total' %}
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><span style="font-weight:bold">{{ value | usd }}</span></td>
+                    {% else %}
+                        <td>{{ value | usd }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-        {% endfor %}
+        </tbody>
     </table>
 {% endblock %}
