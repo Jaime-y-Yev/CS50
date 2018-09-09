@@ -41,29 +41,33 @@ db = SQL("sqlite:///finance.db")
 def index():
     """Show portfolio of stocks"""
 
+    # Get list of symbols their total shares
     symbol_shares = db.execute("SELECT symbol, SUM(shares) FROM transactions WHERE username = :username GROUP BY symbol", username=session["username"])
 
-    grand_total = 0
-
+    # Determine the holdings for each symbol and the total holdings
+    total_holdings = 0
     for company in symbol_shares:
-        symbol = company['symbol']
-        name_price_symbol = lookup(symbol)
-        price = name_price_symbol['price']
-        company['price'] = price
+        # Find out total worth of the symbol
+        symbol = company['symbol']              # get the current symbol
+        name_price_symbol = lookup(symbol)      # look up the name and price
+        price = name_price_symbol['price']      # record the price
+        company['price'] = price                # associate the price with the current symbol
 
-        holding = price * int(company['SUM(shares)'])
-        company['holding'] = holding
+        # Calculate holding = shares * value / shares
+        holding = int(company['SUM(shares)']) * price   # calculate total current worth of shares for that symbol
+        company['holding'] = holding                    # associate the total current worth  with the current symbol
 
-        grand_total = grand_total + holding
+        total_holdings = total_holdings + holding         # sum up all the holdings for all the symbols
 
 
+    # Determine cash and overall total
     cash = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
     symbol_shares.append(cash[0])
 
-    grand_total = grand_total + cash[0]['cash']
-    symbol_shares.append({'grand_total': grand_total})
+    total = total_holdings + cash[0]['cash']
+    symbol_shares.append({'total': total})
 
-
+    # Send the symbols, shares, price, and totals to the home page
     return render_template("index.html", chart=symbol_shares)
 
 
