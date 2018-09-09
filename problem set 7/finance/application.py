@@ -203,28 +203,27 @@ def quote():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
+        # Ensure symbol was submitted
         if not request.form.get("symbol"):
             return apology("must provide symbol", 400)
 
         name_price_symbol = lookup(request.form.get("symbol"))
 
-        # Ensure password was submitted
+        # Ensure symbol was found
         if name_price_symbol == None:
             return apology("could not find symbol", 400)
 
+        # Extract name, price, and symbol
         name = name_price_symbol["name"]
         price = name_price_symbol["price"]
         symbol = name_price_symbol["symbol"]
 
-        # Redirect user to home page
-        return render_template("quoted.html", name_price_symbol=name_price_symbol, price=price)
+        # Display name, price, and symbol
+        return render_template("quoted.html", name=name, price=price, symbol=symbol)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("quote.html")
-
-
 
 
 @app.route("/register", methods=["GET", "POST"])

@@ -5,6 +5,5 @@
 {% endblock %}
 
 {% block main %}
-   Here's your quote:
-   Name: {{ price | usd }}
+   {{ name }} ({{ symbol }}) is currently at {{ price | usd }} per share
 {% endblock %}
