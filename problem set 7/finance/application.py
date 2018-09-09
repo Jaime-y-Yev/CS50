@@ -240,15 +240,14 @@ def register():
         if not request.form.get("username"):
             return apology("must provide username", 400)
 
-         # Query database for username
-        usernames = db.execute("SELECT username FROM users")
+        desired_username = request.form.get("username")
 
-        found = 0
-        for user in usernames:
-            if request.form.get("username") == user['username']:
-                found = 1
-        if found == 1:
+        # Check that desired_username isn't already registered
+        usernames = db.execute("SELECT username FROM users WHERE username=:desired_username", desired_username=desired_username)    # query database for desired username
+
+        if len(usernames) != 0:                                 # if something came up under that username, it means it already exists
             return apology("username already exists", 400)
+
 
         # Ensure password was submitted
         if not request.form.get("password"):
@@ -258,15 +257,16 @@ def register():
         if not request.form.get("confirmation"):
             return apology("must confirm password", 400)
 
-
         # Ensure password and confirmation match
         elif  request.form.get("confirmation") != request.form.get("password"):
             return apology("password and confirmation must match", 400)
 
         hash_password = generate_password_hash(request.form.get("password"))
 
-        # Insert new row into database
+
+        # Insert new user into users
         db.execute('INSERT INTO users ("id","username","hash") VALUES (NULL,:username,:password)', username=request.form.get("username"), password=hash_password)
+
 
         # Redirect user to home page
         return redirect("/")
@@ -284,49 +284,47 @@ def sell():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
-        #if not request.form("symbol"):
-            #return apology("must provide symbol", 403)
-
         symbol = request.form["symbol"]
+
+        # Ensure a symbol was submitted
+        if symbol == "Choose a symbol":
+            return apology("choose a symbol", 403)
 
         name_price_symbol = lookup(symbol)
 
-        # Ensure password was submitted
+        # Ensure the symbol exists
         if name_price_symbol == None:
             return apology("could not find symbol online", 403)
 
-        symbol_shares = db.execute("SELECT symbol, SUM(shares) FROM transactions WHERE username = :username GROUP BY symbol", username=session["username"])
+        symbol_shares = db.execute("SELECT symbol, SUM(shares) AS shares FROM transactions WHERE username = :username GROUP BY symbol", username=session["username"])
 
-        found = 0
-        for company in symbol_shares:
-            if symbol == company['symbol']:
-                found = 1
-                sumShares = company['SUM(shares)']
-        if found == 0:
-            return apology("could not find symbol in your portfolio", 403)
+        # Find the total shares owned for this symbol
+        sumShares = next(company['shares'] for company in symbol_shares if company["symbol"] == symbol)
 
-        # Ensure username was submitted
-        if int(request.form.get("shares")) <= 0:
+        # Record number of shares to sell
+        shares = int(request.form.get("shares"))
+
+        # Ensure a positive number shares to sell was submitted
+        if shares <= 0:
             return apology("must input positive number of shares", 400)
-
-        if int(request.form.get("shares")) > sumShares:
+        # Ensure user has enough shares to sell
+        if shares > sumShares:
             return apology("you do not have enough shares to sell", 400)
 
-        shares = 0 - int(request.form.get("shares"))
+        # Calculate the benefit gained from selling the shares and new cash amount
+        price = float(name_price_symbol["price"])       # find out the current price per share
+        benefit = shares * price                        # calculate the total benefit of this sale
 
-        price = float(name_price_symbol["price"])
+        currentCash = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])        # find out how much cash the user currently has
+        currentCash = currentCash[0]['cash']
 
-        benefit = -shares * price
+        cash = currentCash + benefit            # calculate how much cash the user will now have
 
-        cash = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
-        cash = cash[0]['cash']
+        db.execute('UPDATE "users" SET "cash"= :cash WHERE "rowid" = :id', cash=cash, id=session["user_id"])    # update the new cash amount for this user
 
-        cash = cash + benefit
 
-        db.execute('INSERT INTO "transactions" ("username","symbol","price", "shares") VALUES (:username,:symbol,:price, :shares)', username=session["username"], symbol=symbol, price=price, shares=shares)
-
-        db.execute('UPDATE "users" SET "cash"= :cash WHERE "rowid" = :id', cash=cash, id=session["user_id"])
+        # Update the transaction history. NOTE NEGATIVE SIGN IN shares=-shares TO INDICATE A SALE IN THE TRANSACTION HISTORY
+        db.execute('INSERT INTO "transactions" ("username","symbol","price", "shares") VALUES (:username,:symbol,:price, :shares)', username=session["username"], symbol=symbol, price=price, shares=-shares)
 
 
         # Redirect user to home page
@@ -334,14 +332,11 @@ def sell():
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
+        # Determine symbols the user owns, so they can populate a drop-down menu of symbols to sell
         symbols = db.execute("SELECT symbol FROM transactions WHERE username= :username GROUP BY symbol", username=session["username"])
 
-        symbol_list = []
-        for company in symbols:
+        return render_template("sell.html", symbols=symbols)
 
-            symbol_list.append(company["symbol"])
-
-        return render_template("sell.html", symbols=symbol_list)
 
 def errorhandler(e):
     """Handle error"""
