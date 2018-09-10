@@ -22,11 +22,12 @@ int main(int argc, string argv[])
     // Fill haystack with ints
     int haystack[MAX_HAYSTACK_SIZE];
     for (int i = 0; i < MAX_HAYSTACK_SIZE; i++)
-        haystack[i] =  get_int();
+        haystack[i] = get_int();
 
 
     // Sort the haystack
     sort(haystack, MAX_HAYSTACK_SIZE);
+
 
     // Try to find the needle in the haystack
     bool found = search(needle, haystack, MAX_HAYSTACK_SIZE);

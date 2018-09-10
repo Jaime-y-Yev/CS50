@@ -24,32 +24,27 @@
 
 int main(int argc, string argv[])
 {
-    // TODO: comment me
+    // Ensure proper usage
     if (argc != 2 && argc != 3)
     {
         printf("Usage: generate n [s]\n");
         return 1;
     }
 
-    // TODO: comment me
-    int n = atoi(argv[1]);
+    int n = atoi(argv[1]);      // record quantity of numbers to generate
 
-    // TODO: comment me
+    // Use seed if given
     if (argc == 3)
-    {
         srand48((long int) atoi(argv[2]));
-    }
     else
-    {
         srand48((long int) time(NULL));
-    }
 
-    // TODO: comment me
+
+    // Show the generated numbers
     for (int i = 0; i < n; i++)
-    {
         printf("%i\n", (int) (drand48() * LIMIT));
-    }
 
-    // success
+
+    // Success
     return 0;
 }
